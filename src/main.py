@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import db, User, Contacts
 #from models import Person
 
 app = Flask(__name__)
@@ -38,6 +38,25 @@ def handle_hello():
     }
 
     return jsonify(response_body), 200
+
+@app.route('/contact', methods=['POST'])
+def create_contact():
+    """
+    Create new contacts
+    """
+    body = request.json
+    new_contact = Contacts()
+    new_contact.name = body["name"]
+    new_contact.email = body["email"]
+    new_contact.phone = body["phone"]
+    new_contact.active = body["active"]
+    
+    db.session.add(new_contact)
+    db.session.commit()
+
+    print(new_contact)
+    print(body)
+    return "Hello", 201
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
